@@ -8,13 +8,8 @@ local inputService = game:GetService('UserInputService')
 local claimDelay = .5
 local teleporting = false
 local claimingItems = false
-local itemsToCollect = {
-	
-}
-local cframesToCheck = {
-	
-}
-
+local itemsToCollect = {}
+local cframesToCheck = {}
 local function propertyForTween(newCFrame)
 	local property = {
 		CFrame = newCFrame
@@ -30,7 +25,6 @@ local function tweenToCFrame(newCFrame)
 	tween:Play()
 	return tween
 end
-
 local function getProximityPrompt(item)
 	local prompt = nil
 	for i,v in pairs(item) do
@@ -79,6 +73,8 @@ local function claimNearest()
 end
 local function claimAllItems()
 	for i,v in pairs(items:GetChildren()) do
+		local yDistance = (v.PrimaryPart.CFrame.Position.Y - character.PrimaryPart.CFrame.Position.Y).Magnitude
+		if yDistance > 20 then return end
 		local tween = tweenToCFrame(v.PrimaryPart.CFrame)
 		tween.Completed:Connect(function()
 			claimNearest()
@@ -93,16 +89,16 @@ game:GetService("ReplicatedStorage").ItemSpawn.OnClientInvoke = function(arg1,..
 		table.insert(cframesToCheck, args['CFrame'])
 	else
 		teleporting = true
-		local tween = tweenToCFrame()
+		local tween = tweenToCFrame(args['CFrame'])
 		tween.Completed:Wait()
 	end
 end
 items.ChildAdded:Connect(function(child)
 	if claimingItems then return end
 	claimingItems = true
+	teleporting = false
 	claimAllItems()
 end)
-
 inputService.InputBegan:Connect(function(input, isTyping)
 	if not isTyping then
 		if input.KeyCode == Enum.KeyCode.R then
@@ -110,6 +106,3 @@ inputService.InputBegan:Connect(function(input, isTyping)
 		end
 	end
 end)
-
-
-
