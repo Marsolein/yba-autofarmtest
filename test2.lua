@@ -4,7 +4,16 @@ local character = living:WaitForChild(player.Name)
 local itemSpawns = game.Workspace:WaitForChild('Item_Spawns')
 local items = itemSpawns:WaitForChild('Items')
 local tweenService = game:GetService('TweenService')
-
+local inputService = game:GetService('UserInputService')
+local claimDelay = .5
+local teleporting = false
+local claimingItems = false
+local itemsToCollect = {
+	
+}
+local cframesToCheck = {
+	
+}
 
 local function propertyForTween(newCFrame)
 	local property = {
@@ -56,21 +65,51 @@ local function getNearestItem(itemCFrame)
 			return nearest
 		end
 	end
-
+end
+local function claimNearest()
+	local nearestItem = getNearestItem(character.PrimaryPart.CFrame)
+	if nearestItem then
+		local prompt = getProximityPrompt(nearestItem)
+		if prompt then
+			prompt.MaxActivationDistance = 20
+			prompt.HoldDuration = 0
+			prompt:InputHoldBegin()
+		end
+	end
+end
+local function claimAllItems()
+	for i,v in pairs(items:GetChildren()) do
+		local tween = tweenToCFrame(v.PrimaryPart.CFrame)
+		tween.Completed:Connect(function()
+			claimNearest()
+			task.wait(claimDelay)
+		end)
+	end
+	claimingItems = false
 end
 game:GetService("ReplicatedStorage").ItemSpawn.OnClientInvoke = function(arg1,...)
 	local args = (...)
-	print(args[1])
-	local tween = tweenToCFrame(args['CFrame'])
-	tween.Completed:Connect(function()
-		local nearestItem = getNearestItem(args['CFrame'])
-		if nearestItem then
-			local prompt = getProximityPrompt(nearestItem)
-			if prompt then
-				prompt.MaxActivationDistance = 20
-				prompt.HoldDuration = 0
-				prompt:InputHoldBegin()
-			end
-		end
-	end)
+	if teleporting or claimingItems then
+		table.insert(cframesToCheck, args['CFrame'])
+	else
+		teleporting = true
+		local tween = tweenToCFrame()
+		tween.Completed:Wait()
+	end
 end
+items.ChildAdded:Connect(function(child)
+	if claimingItems then return end
+	claimingItems = true
+	claimAllItems()
+end)
+
+inputService.InputBegan:Connect(function(input, isTyping)
+	if not isTyping then
+		if input.KeyCode == Enum.KeyCode.R then
+			game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, player)
+		end
+	end
+end)
+
+
+
