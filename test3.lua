@@ -73,7 +73,7 @@ local function claimNearest()
 end
 local function claimAllItems()
 	for i,v in pairs(items:GetChildren()) do
-		local yDistance = (v.PrimaryPart.CFrame.Position.Y - character.PrimaryPart.CFrame.Position.Y).Magnitude
+		local yDistance = (v.PrimaryPart.CFrame.Position.Y - character.PrimaryPart.CFrame.Position.Y)
 		if yDistance > 20 then return end
 		local tween = tweenToCFrame(v.PrimaryPart.CFrame)
 		tween.Completed:Connect(function()
