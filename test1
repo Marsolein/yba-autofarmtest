@@ -1,179 +1,76 @@
 local player = game.Players.LocalPlayer
-local screenGui = Instance.new('ScreenGui')
-screenGui.Parent = player.PlayerGui
-screenGui.ResetOnSpawn = false
-local itemSpawns = game.Workspace:WaitForChild('Item_Spawns')
-local items = itemSpawns:WaitForChild('Items')
 local living = game.Workspace:WaitForChild('Living')
 local character = living:WaitForChild(player.Name)
-local exhausting = false
-local travelling = false
-local tpLocations = {
-	365, 3.061203, -61,
-	377, 1.061203, 9,
-	605.524414, 6.81545687, -69.744278,
-	881.524414, 35.144455, -103.744278,
-	932.524414, 35.144455, -145.744278,
-	939.524414, 35.144455, -0.744277954,
-	531.524414, -0.0399999619, -172.088058,
-	536.084106, 1.96000004, -69.027153,
-	533.084106, 1.96000004, 78.972847,
-	594.084106, 1.96000004, 152.972839,
-	486.084106, 1.96000004, 157.972839,
-	454.084106, 1.96000004, 116.972839,
-	452.084106, 1.96000004, 37.9728394,
-	527.824097, 4.96000004, 1.42062426,
-	474.824097, 2.96000004, -87.9343719,
-	286.943604, 2.20511818, 55.0256195,
-	190.623627, 2.20511818, -21.9743805,
-	174.623627, 5.20511818, 33.0256195,
-	120.623627, 5.20511818, 81.6148987,
-	186.623627, 4.20511818, 110.614899,
-	372.623627, 0.205118179, 195.614899,
-	170.623627, 0.205118179, 175.912048,
-	295.667664, -25.766922, 329.929016,
-	238.667664, -25.766922, 469.929016,
-	60.6676636, -25.766922, 488.929016,
-	194.667664, -25.766922, 587.929016,
-	28.6676636, -25.766922, 525.929016,
-	-105.332336, -19.766922, 438.929016,
-	-37.3302078, -8.766922, 338.121521,
-	5.66979218, 2.233078, 201.121521,
-	-53.3302078, 7.233078, 141.121521,
-	9.06798172, 1.233078, 127.121521,
-	38.0590668, 1.233078, 12.121521,
-	-68.9409332, 4.233078, 12.121521,
-	-131.940933, -0.766921997, 141.121521,
-	-220.940933, -0.766921997, 40.121521,
-	-268.940918, -4.766922, 71.121521,
-	-273.940918, -4.766922, -76.878479,
-	-405.940918, 1.233078, 130.121521,
-	-405.940918, 1.233078, -85.878479,
-	-301.940918, 1.233078, -138.878479,
-	-361.940918, 1.233078, -121.878479,
-	-390.597717, 1.233078, -236.347687,
-	-467.597717, 1.233078, -97.3476868,
-	-467.597717, 1.233078, -372.347687,
-	-555.597717, -24.766922, -265.347687,
-	-632.597717, -24.766922, -237.347687,
-	-557.454224, -23.766922, -167.347687,
-	-523.173767, -23.1116982, -157.672867,
-	-574.173767, -23.1116982, -99.6728668,
-	-647.173767, -21.1116982, -371.672852,
-	-711.173767, -24.6984215, -428.672852,
-	-735.173767, -24.6984215, -539.672852,
-	-540.34491, -24.6984215, -569.672852,
-	-604.34491, -24.6984215, -597.672852,
-	-630.34491, -24.6984215, -716.473999,
-	-576.34491, 10.3015785, -737.473999,
-	-603.34491, 10.3015785, -821.473999,
-	-485.207428, 16.3015785, -806.77179,
-	-349.530518, 1.30157852, -808.359192,
-	-406.530518, 1.30157852, -679.359192,
-	-357.530518, 1.30157852, -623.359192,
-	-252.530518, -29.6984215, -566.359192,
-	-61.5305176, 0.301578522, -682.741455,
-	-65.5305176, 0.301578522, -547.741455,
-	-143.530518, 0.301578522, -583.741455,
-	-148.530518, 0.301578522, -465.741455,
-	-136.530518, 0.301578522, -388.741455,
-	-52.5305176, 8.30157852, -385.741455,
-	-21.5305176, 0.301578522, -337.440002,
-	-143.530518, 0.301578522, -285.440002,
-	-232.530518, 0.301578522, -140.440002,
-	-136.530518, 0.301578522, -91.4400024,
-	119.469482, 0.301578522, -333.332672,
-	119.469482, 0.301578522, -271.332672,
-	58.4694824, 0.301578522, -243.332672,
-	165.469482, 0.301578522, -134.332672,
-	217.469482, 0.301578522, -175.578735,
-	232.469482, 0.301578522, -89.5787354,
-	281.469482, 7.30157852, -268.578735,
-	431.749054, 12.3015785, -282.578735,
-	436.749054, 8.30157852, -234.578735,
-	594.749023, 0.301578522, -275.578735,
-	407.749023, 0.301578522, -431.578735,
-	252.649673, 6.30157852, -390.72168,
-	224.649673, 0.301578522, -467.72168,
-	148.649673, 1.05442286, -473.72168,
-	223.821198, 1.05442286, -585.72168
-}
-local queue = {
-	
-}
+local itemSpawns = game.Workspace:WaitForChild('Item_Spawns')
+local items = itemSpawns:WaitForChild('Items')
 local tweenService = game:GetService('TweenService')
-local inputService = game:GetService('UserInputService')
-local tweenInfo = TweenInfo.new(3,Enum.EasingStyle.Linear)
-local function randomFromTable(tableToSearch)
-	local random = math.random(1, #tableToSearch)
-	local returnItem = tableToSearch[random]
-	return returnItem
-end
-local function addItem(item)
-	table.insert(queue, item)
-end
-local function fillQueue()
-	for i,v in pairs(items:GetChildren()) do
-		addItem(v)
-	end
-end
-local function getProperty(item)
+
+
+local function propertyForTween(newCFrame)
 	local property = {
-		CFrame = item.PrimaryPart.CFrame
+		CFrame = newCFrame
 	}
 	return property
 end
-local function tweenToItem(item)
-	local tween = tweenService:Create(character.PrimaryPart, tweenInfo, getProperty(item))
+local function tweenToCFrame(newCFrame)
+	local property = {
+		CFrame = newCFrame
+	}
+	local tweenInfo = TweenInfo.new(1,Enum.EasingStyle.Linear)
+	local tween = tweenService:Create(character.PrimaryPart, tweenInfo, property)
 	tween:Play()
 	return tween
 end
-local function tpLoop()
-	local property = {
-		CFrame = CFrame.new(randomFromTable(tpLocations))
-	}
-	local tween = tweenService:Create(character.PrimaryPart, tweenInfo, getProperty(item))
-	tween:Play()
-	tween.Completed:Connect(function()
-		if travelling then
-			tpLoop()
-		end
-	end)
-end
-local function exhaustQueue()
-	for i,v in pairs(queue) do
-		if exhausting then
-			if v then
-				tweenToItem(v).Completed:Wait()
-				v.ProximityPrompt:InputHoldBegin()
-				v.Destroying:Wait()
+
+local function getProximityPrompt(item)
+	local prompt = nil
+	for i,v in pairs(item) do
+		if v:IsA('ProximityPrompt') then
+			if v.Enabled == false then
+				v.Name = "FalsePrompt"
 			else
-				continue
+				prompt = v
+			end
+		end
+	end
+	if prompt then
+		return prompt
+	end
+end
+local function getNearestItem(itemCFrame)
+	local nearest = nil
+	for i,v in pairs(items:GetChildren()) do
+		if nearest then
+			local nearestPrimary = nearest.PrimaryPart
+			local nearestDistance = (nearestPrimary.CFrame.Position - itemCFrame.Position).Magnitude
+			local newDistance = (v.PrimaryPart.CFrame.Position - itemCFrame.Position).Magnitude
+
+			if newDistance < nearestDistance then
+				nearest = v
 			end
 		else
-			break
+			nearest = v
+		end
+
+		if (nearest.PrimaryPart.CFrame.Position - itemCFrame.Position).Magnitude < 5 then
+			return nearest
 		end
 	end
-	exhausting = false
-	travelling = true
-	tpLoop()
+
 end
-local function resetAndExhaust()
-	exhausting = false
-	queue = {}
-	fillQueue()
-	exhaustQueue()
-end
-items.ChildAdded:Connect(function(child)
-	addItem(child)
-	print('item spawned '..child.Name)
-	if exhausting == false then
-		travelling = false
-		exhausting = true
-		exhaustQueue()
-	end
-end)
-if exhausting == false then
-	exhausting = true
-	exhaustQueue()
+game:GetService("ReplicatedStorage").ItemSpawn.OnClientInvoke = function(arg1,...)
+	local args = (...)
+	print(args[1])
+	local tween = tweenToCFrame(args['CFrame'])
+	tween.Completed:Connect(function()
+		local nearestItem = getNearestItem(args['CFrame'])
+		if nearestItem then
+			local prompt = getProximityPrompt(nearestItem)
+			if prompt then
+				prompt.MaxActivationDistance = 20
+				prompt.HoldDuration = 0
+				prompt:InputHoldBegin()
+			end
+		end
+	end)
 end
