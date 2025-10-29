@@ -173,6 +173,7 @@ local function fight(opponent)
 				m1()
 			end
 		end
+		task.wait()
 	until opponent.Humanoid.Health <= 0
 end
 local function killNpc(nameToFind)
