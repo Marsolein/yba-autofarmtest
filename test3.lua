@@ -25,7 +25,7 @@ local function tpToCFrame(newCFrame, character)
 	local property = {
 		CFrame = newCFrame
 	}
-	local tweenInfo = TweenInfo.new(1,Enum.EasingStyle.Linear)
+	local tweenInfo = TweenInfo.new(5,Enum.EasingStyle.Linear)
 	local tween = tweenService:Create(character.PrimaryPart, tweenInfo, property)
 	tween:Play()
 	return tween
