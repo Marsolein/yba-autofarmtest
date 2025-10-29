@@ -25,7 +25,7 @@ local function tpToCFrame(newCFrame, character)
 	local property = {
 		CFrame = newCFrame
 	}
-	local tweenInfo = TweenInfo.new(5,Enum.EasingStyle.Linear)
+	local tweenInfo = TweenInfo.new(1,Enum.EasingStyle.Linear)
 	local tween = tweenService:Create(character.PrimaryPart, tweenInfo, property)
 	tween:Play()
 	return tween
@@ -180,7 +180,7 @@ local function killNpc(nameToFind)
 	local npc
 	local character = getCharacter()
 	repeat npc = getLivingNpc(nameToFind) task.wait() until npc.Humanoid and npc.Humanoid.Health > 0
-	local distance = (npc.PrimaryPart.CFrame.Position  - character.PrimaryPart.CFrame.Position).Magnitude
+	local distance = (npc.PrimaryPart.Position  - character.PrimaryPart.Position).Magnitude
 	
 	if distance > 10 then
 		local tween = tpToCFrame(npc.PrimaryPart.CFrame, character)
