@@ -191,10 +191,18 @@ local function killNpc(nameToFind)
 		fight(npc)
 	end
 end
+
 local function quest1()
 	local progress, goal = getQuestProgress()
 	repeat
 		killNpc("Thug")
+		progress, goal = getQuestProgress()
+	until progress == goal
+end
+local function quest2()
+	local progress, goal = getQuestProgress()
+	repeat
+		killNpc("Alpha Thug")
 		progress, goal = getQuestProgress()
 	until progress == goal
 end
@@ -229,7 +237,9 @@ local function startQuest1()
 	end
 end
 local questList = {
-	["Defeat 30 Thugs (Dio's Plan)"] = quest1()
+	["Defeat 30 Thugs (Dio's Plan)"] = quest1(),
+	["Defeat 25 Alpha Thugs (Dio's Plan)"] = quest2(),
+	
 }
 local function initialize()
 	local diary = checkForItem("Dio's Diary")
@@ -245,6 +255,6 @@ local function initialize()
 	if questList[quest] then
 		questList[quest]()
 	else
-		startQuest1()
+		rejoinServer()
 	end
 end
